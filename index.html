@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>Title</title>
+		<title>Pathway Enrichment</title>
 
 		<link rel="stylesheet" href="reveal.js/dist/reset.css">
 		<link rel="stylesheet" href="reveal.js/dist/reveal.css">
@@ -13,13 +13,134 @@
 
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css" id="highlight-theme">
+		<style type="text/css">
+			.italic {
+				font-style: italic;
+			}
+			strong {
+				text-decoration: underline;
+			}
+		</style>
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
 				<section>
-					<h1>Random Forests</h1>
+					<h1>Pathway Enrichment</h1>
 					<p>Bastian Schiffthaler</p>
+				</section>
+				<section>
+					<section>
+						<h3>On the Choice of Database</h3>
+					</section>
+					<section>
+						<h3>KEGG: Kyoto Encyclopedia of Genes and Genomes (https://www.kegg.jp/)</h3>
+						<img data-src="https://www.kegg.jp/Fig/kegg128.gif">
+						<ul>
+							<li class="fragment">Comprehensive database of pathways</li>
+							<li class="fragment">Support for numerous models built in</li>
+							<li class="fragment">Non models can be inferred via e.g. BLAST</li>
+						</ul>
+						<p class="fragment"><a href="https://kegg.jp">Let's have a look</a></p>
+					</section>
+					<section>
+						<h3>REACTOME</h3>
+						<img data-src="https://reactome.org/templates/favourite/images/logo/logo.png">
+						<ul>
+							<li class="fragment">Comprehensive database of pathways</li>
+							<li class="fragment">Support for humans only</li>
+							<li class="fragment">Extremely well supported web interface</li>
+						</ul>
+						<p class="fragment"><a href="https://reactome.org">Let's have a look</a></p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h3>On the Statistics</h3>
+					</section>
+					<section>
+						<h3>Statistical Approaches</h3>
+						<img class="stretch" data-src="https://hbctraining.github.io/DGE_workshop_salmon_online/img/pathway_analysis.png">
+						<ul>
+							<li class="fragment">ORA: Overenrichment Analysis</li>
+							<li class="fragment">FCS: Functional Class Scoring</li>
+							<li class="fragment">PT: Pathway Topology Analysis</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Overenrichment Analysis</h3>
+						<p>packages: clusterProfiler, ReactomePA, DOSE</p>
+						<ul>
+							<li class="fragment" data-fragment-index=1>Given a set of genes, how high is the probability that N genes are annotated to pathway <span class="italic">t</span></li>
+						</ul>
+						<img class="fragment stretch" data-fragment-index=2 data-src="img/poker.png"></img>
+						<ul>
+							<li class="fragment" data-fragment-index=2>Similar to poker: <span class="italic">e.g.</span> given a deck of 52 cards, what is the probability to draw exactly 4 fives in a hand of 5.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Extending to genes</h3>
+						<ul>
+							<li class="fragment">population $m$ (background): our deck of cards</li>
+							<li class="fragment">study $n$: our hand (five cards)</li>
+							<li class="fragment">population term set $m_t$: number of aces in the deck</li>
+							<li class="fragment">study term set $n_t$: number of aces in our hand</li>
+						</ul>
+						<img class="stretch" data-src="img/hgeom.png"></img>
+						<p class="small">Steffen Grossmann, Sebastian Bauer, Peter N. Robinson, Martin Vingron, Improved detection of overrepresentation of Gene-Ontology annotations with parent–child analysis, Bioinformatics, Volume 23, Issue 22, 15 November 2007, Pages 3024–3031, https://doi.org/10.1093/bioinformatics/btm440</p>
+					</section>
+					<section>
+						<h3>Why the Background Matters</h3>
+						<ul>
+							<li class="fragment" data-fragment-index=1>Imagine we only use 30 randomly chose cards</li>
+							<li class="fragment" data-fragment-index=2>How high is the probability now? (depends)</li>
+							<li class="fragment" data-fragment-index=3>In your RNA-Seq experiment, are <strong>all annotated genes</strong> able to be sampled/drawn?</li>
+							<img class='fragment stretch' data-src="https://media.nature.com/lw800/magazine-assets/d41586-018-05462-w/d41586-018-05462-w_15856180.png" data-fragment-index=4>
+							<p class="fragment small" data-fragment-index=4>https://www.nature.com/articles/d41586-018-05462-w</p>
+						</ul>
+					</section>
+					<section>
+						<h3>Functional class scoring</h3>
+						<p>packages: clusterProfiler, fgsea, ReactomePA, DOSE</p>
+						<ul>
+							<li class="fragment">Consider some numerical value as opposed to just a plain set</li>
+							<li class="fragment">Most often: log2FC</li>
+							<li class="fragment">Permutation test to estimate $p$</li>
+						</ul>
+					</section>
+					<section data-background="white">
+						<h3>GSEA</h3>
+						<img data-src="https://hbctraining.github.io/DGE_workshop_salmon_online/img/gsea_overview.png">
+						<p class="small">Subramanian et al. Proceedings of the National Academy of Sciences Oct 2005, 102 (43) 15545-15550; DOI: 10.1073/pnas.0506580102</p>
+					</section>
+					<section>
+						<h3>Pathway Topology Analysis</h3>
+						<p>Packages: SPIA</p>
+						<ul>
+							<li class="fragment">Consider pathway topology</li>
+							<li class="fragment">Different genes in pathways have varying gravity</li>
+						</ul>
+					</section>
+					<section data-background="white">
+						<h3>SPIA: Signal Pathway Impact Analysis</h3>
+						<ul>
+							<li>Combine hypergeometric analysis with perturbation</li>
+							<li>Two result metrics</li>
+							<li>pNDE: hypergeom probability to have N genes in pathway</li>
+							<li>pPERT: probability to observe pertubation as extreme by chance</li>
+							<li>pPERT is a combination of DE (fold change) and position in the pathway</li>
+						</ul>
+						<img class="stretch" data-src="img/spia.png">
+						<p class="small">Tarca, A. L., Draghici, S., Khatri, P., Hassan, S. S., Mittal, P., Kim, J. S., Kim, C. J., Kusanovic, J. P., & Romero, R. (2009). A novel signaling pathway impact analysis. Bioinformatics (Oxford, England), 25(1), 75–82. https://doi.org/10.1093/bioinformatics/btn577</p>
+					</section>
+					<section data-background="white">
+						<h3>Other approaches: pathfindR</h3>
+						<ul>
+							<li class="fragment">Combined protein interaction networks (PPI) and ORA</li>
+							<li class="fragment">For human: single function (a la <code class="r">DESeq()</code>)</li>
+							<img data-src="img/pathfindr.png"></img>
+						</ul>
+					</section>
 				</section>
 			</div>
 		</div>
